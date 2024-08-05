@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="synthwave" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note</title>
+    <link rel="icon" type="image/x-icon" href="./image/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Noto+Sans+JP:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link href="./tailwind/Daisy.css" rel="stylesheet" type="text/css">
+    <script src="./tailwind/Tailwind.js"></script>
+    <link href="./style/style.css" rel="stylesheet">
+</head>
+
+<body class="h-full">
+
+    <div class="navbar bg-base-100 h-[10vh]">
+        <div class="flex-1">
+            <div class="text-3xl ps-5 lexend-bold">Todo</div>
+        </div>
+        <div class="flex flex-1 justify-end px-2">
+            <div class="flex items-stretch">
+                <div class="dropdown dropdown-end dropdown-hover lexend-bold">
+                    <div tabindex="0" role="button" class="btn m-1">Theme</div>
+                    <ul id="List_Theme" tabindex="0"
+                        class="dropdown-content menu bg-base-100 rounded-box z-[100] p-2 shadow h-64 flex flex-col flex-nowrap overflow-y-scroll">
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="h-[90vh] pt-10">
+        <div class="grid sm:grid-cols-1 md:grid-cols-2 gap-y-1 justify-items-center h-full w-full mx-auto">
+            <div class="w-full lg:w-3/4 lg:justify-self-end px-5 h-full max-h-[90%] overflow-y-hidden">
+                <div class="mockup-code w-full h-full">
+                    <div class="overlay"> </div>
+                    <div id="notes" class="w-full h-[95%] flex flex-col overflow-y-auto gap-4 pb-8">
+
+
+                    </div>
+
+                    <!-- <span>
+                        <div class="px-3 w-full max-h-[50%] md:max-h-[25%]">
+                            <div class="lexend-regular bg-accent text-accent-content rounded-lg inline-flex p-3 hover:border-solid w-full h-full">
+                                <input type="checkbox"
+                                    class="checkbox border-2 border-accent-content mr-5 self-center" />
+                                <div class="grid grid-cols-1 w-[95%] gap-2">
+                                    <p class="break w-full overflow-y-auto lexend-regular">THANKS GOD IT FIXED</p>
+                                    <p class="lexend-bold text-secondary-content">zxczxc</p>
+                                </div>
+                            </div>
+                        </div>
+                    </span> -->
+
+                    <!-- <span>
+                        <pre data-prefix=">"
+                            class="lexend-bold bg-warning text-warning-content">GOOD JOB THERE IS NO TODOs</pre>
+                    </span> -->
+
+                </div>
+            </div>
+
+            <div class="w-full lg:w-3/4 lg:justify-self-start px-5 h-full max-h-[90%] flex flex-col gap-2">
+                <textarea placeholder="Note"
+                    class="textarea lexend-regular bg-base-300 textarea-md h-full w-full text-md md:text-xl"
+                    style="resize: none;" id="input"></textarea>
+                <div class="w-full">
+                    <p class="lexend-regular text-sm ps-1">Due Date</p>
+                    <input id="date_picker" type="datetime-local" class="w-full p-2 rounded-lg bg-base-300 lexend-regular text-sm">
+                </div>
+                <div class="flex gap-4 place-content-center">
+                    <button id="add" class="btn btn-sm md:btn-md lexend-bold">Add</button>
+                    <button id="del" class="btn btn-sm md:btn-md lexend-bold">Remove</button>
+                    <!-- <button class="btn btn-sm md:btn-md lexend-bold">Responsive</button> -->
+                </div>
+            </div>
+
+            <!-- <div id="quote" class="w-full quote bg-base-300">
+                asdasd
+            </div> -->
+
+        </div>
+    </div>
+
+    <script src="./main.js"></script>
+
+</body>
+
+</html>
