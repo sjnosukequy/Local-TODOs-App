@@ -90,34 +90,35 @@ function note_obj(data, start, end, id) {
 
 function time_diff(start, end) {
     let diff = end - start
-    let days = Math.round(diff / (1000 * 60 * 60 * 24))
-    let hours = diff / (1000 * 60 * 60)
-    if (days > 0)
-        return days.toString() + ' Days Left';
-    else if (days == 0)
-        if (hours > 0) {
-            hours = Math.ceil(hours)
-            return hours.toString() + ' Hours Left';
-        }
-        else {
-            hours = Math.floor(hours)
-            return 'Due ' + Math.abs(hours).toString() + ' Hours'
-        }
-    else
-        return 'Due ' + Math.abs(days).toString() + ' Days'
+    if (diff > 0) {
+        let days = Math.floor(diff / (1000 * 60 * 60 * 24))
+        let hours = Math.floor(diff / (1000 * 60 * 60) - days * 24)
+        let mins = Math.ceil(diff / (1000 * 60) - hours * 60)
+        return days.toString() + ' Days ' + hours.toString() + 'h ' + mins.toString() + 'm Left';
+    }
+    else {
+        let days = Math.ceil(diff / (1000 * 60 * 60 * 24))
+        let hours = Math.ceil(diff / (1000 * 60 * 60) - days * 24)
+        let mins = Math.ceil(diff / (1000 * 60) - hours * 60)
+        return 'Due ' + Math.abs(days).toString() + ' Days ' + Math.abs(hours).toString() + 'h ' + Math.abs(mins).toString() + 'm'
+    }
 }
 
 function note(data, start, end, id) {
     let a = document.createElement('div')
     let b = time_diff(start, end)
     let c = new Date(end).toLocaleString()
+    let theme = 'accent'
+    if(b.includes('Due'))
+        theme = 'error'
+
     a.setAttribute('class', 'px-3 w-full max-h-[50%]')
     a.setAttribute('id', `${id}`)
-    let html = `<div class="lexend-regular bg-accent text-accent-content rounded-lg inline-flex p-3 hover:border-solid w-full h-full">
-                    <input type="checkbox" class="checkbox border-2 border-accent-content mr-5 self-center" />
+    let html = `<div class="relative lexend-regular bg-${theme} text-${theme}-content rounded-lg inline-flex p-3 hover:border-solid w-full h-full">
+                    <input type="checkbox" class="checkbox border-2 border-${theme}-content mr-5 self-center" />
                     <div class="grid grid-cols-1 w-[95%] gap-2">
                         <p class="break w-full overflow-y-auto lexend-regular">${data}</p>
-                        <p class="lexend-bold text-secondary-content">${b}&ensp;|&emsp;${c}</p>
+                        <p class="lexend-bold text-${theme}-content">${b}&ensp;|&emsp;${c}</p>
                     </div>
                 </div>`
     a.innerHTML = html
