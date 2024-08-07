@@ -20,6 +20,7 @@
         <button id="next" style="display: none;">next</button>
         <button id="prev" style="display: none;">previous</button>
         <button id="thumb" hide="false" style="display: none;">Show/Hide</button>
+        <button id="loop" values="none,all,once" inex='0' style="display: none;">repeat: none</button>
     </div>
     <p id="playlist_len"></p>
     <script>
@@ -28,6 +29,7 @@
         let song_idx = 0
         var tag = document.createElement('script');
         let body = document.querySelector('#contaier')
+        let loop = 'none'
 
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -47,8 +49,14 @@
             document.getElementById('tile').innerText = event.target.videoTitle
             document.getElementById('playlist_len').innerText = song_list.length.toString() + ' in the playlist'
             if (event.data == 0)
-                if (song_idx + 1 < song_list.length) {
+                if (loop == 'once') {
+                    player.loadVideoById(`${song_list[song_idx]}`)
+                }
+                else if (song_idx + 1 < song_list.length) {
                     song_idx += 1
+                    player.loadVideoById(`${song_list[song_idx]}`)
+                } else if (loop == 'all') {
+                    song_idx = 0
                     player.loadVideoById(`${song_list[song_idx]}`)
                 }
         }
@@ -60,6 +68,7 @@
             document.getElementById('next').style.display = 'block'
             document.getElementById('prev').style.display = 'block'
             document.getElementById('thumb').style.display = 'block'
+            document.getElementById('loop').style.display = 'block'
 
             document.getElementById('play').addEventListener('click', () => {
                 player.playVideo()
@@ -91,6 +100,9 @@
                 if (song_idx + 1 < song_list.length) {
                     song_idx += 1
                     player.loadVideoById(`${song_list[song_idx]}`)
+                } else if (loop == 'all') {
+                    song_idx = 0
+                    player.loadVideoById(`${song_list[song_idx]}`)
                 }
             })
 
@@ -101,6 +113,20 @@
                 }
             })
 
+            document.getElementById('loop').addEventListener('click', () => {
+                let a = document.getElementById('loop')
+                let idx = parseInt(a.getAttribute('inex'))
+                let values = a.getAttribute('values').split(',')
+                if (idx + 1 < values.length)
+                    idx += 1
+                else
+                    idx = 0
+                let value = values[idx]
+                loop = value
+                a.innerText = 'repeat: ' + value
+                a.setAttribute('inex', idx)
+
+            })
         }
 
         document.getElementById('play_current').addEventListener('click', () => {

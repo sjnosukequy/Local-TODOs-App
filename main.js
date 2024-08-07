@@ -91,15 +91,15 @@ function note_obj(data, start, end, id) {
 function time_diff(start, end) {
     let diff = end - start
     if (diff > 0) {
-        let days = Math.floor(diff / (1000 * 60 * 60 * 24))
-        let hours = Math.floor(diff / (1000 * 60 * 60) - days * 24)
-        let mins = Math.ceil(diff / (1000 * 60) - hours * 60)
+        days = Math.floor(diff / (1000 * 60 * 60 * 24))
+        hours = Math.floor(diff / (1000 * 60 * 60) - days * 24)
+        mins = Math.ceil(diff / (1000 * 60) - days * 24 * 60 - hours * 60)
         return days.toString() + ' Days ' + hours.toString() + 'h ' + mins.toString() + 'm Left';
     }
     else {
         let days = Math.ceil(diff / (1000 * 60 * 60 * 24))
         let hours = Math.ceil(diff / (1000 * 60 * 60) - days * 24)
-        let mins = Math.ceil(diff / (1000 * 60) - hours * 60)
+        let mins = Math.ceil(diff / (1000 * 60) - days * 24 * 60 - hours * 60)
         return 'Due ' + Math.abs(days).toString() + ' Days ' + Math.abs(hours).toString() + 'h ' + Math.abs(mins).toString() + 'm'
     }
 }
@@ -109,7 +109,7 @@ function note(data, start, end, id) {
     let b = time_diff(start, end)
     let c = new Date(end).toLocaleString()
     let theme = 'accent'
-    if(b.includes('Due'))
+    if (b.includes('Due'))
         theme = 'error'
 
     a.setAttribute('class', 'px-3 w-full max-h-[50%]')
