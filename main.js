@@ -84,7 +84,8 @@ function note_obj(data, start, end, id) {
         "data": data,
         "start": start,
         "end": end,
-        "id": id
+        "id": id,
+        "done": false
     }
 }
 
@@ -104,13 +105,14 @@ function time_diff(start, end) {
     }
 }
 
-function note(data, start, end, id) {
+function note(data, start, end, id, done) {
     let a = document.createElement('div')
     let b = time_diff(start, end)
     let c = new Date(end).toLocaleString()
     let theme = 'accent'
-    if (b.includes('Due'))
-        theme = 'error'
+    if (done === false || done === null || done === undefined)
+        if (b.includes('Due'))
+            theme = 'error'
 
     a.setAttribute('class', 'px-3 w-full max-h-[50%]')
     a.setAttribute('id', `${id}`)
@@ -118,10 +120,17 @@ function note(data, start, end, id) {
                     <input type="checkbox" class="checkbox border-2 border-${theme}-content mr-5 self-center" />
                     <div class="grid grid-cols-1 w-[95%] gap-2">
                         <p class="break w-full overflow-y-auto lexend-regular">${data}</p>
-                        <p class="lexend-bold text-${theme}-content">${b}&ensp;|&emsp;${c}</p>
+                        <p class="lexend-bold text-${theme}-content">${b} | ${c}</p>
                     </div>
                 </div>`
     a.innerHTML = html
+
+    if (done === true) {
+        let content = a.querySelectorAll('p')[1]
+        content.innerText = 'DONE ' + content.innerText.replace(/\xA0/g, '').split('|')[1]
+    }
+
+    // Set Checkbox event
     let checkbox = a.querySelector('input')
     checkbox.addEventListener('change', () => {
         if (checkbox.checked)
@@ -151,7 +160,7 @@ if (notes_keys.length == 0) {
 }
 for (let i in notes_keys) {
     let a = notes[notes_keys[i]]
-    let b = note(a['data'], new Date().valueOf().toString(), a['end'], a['id'])
+    let b = note(a['data'], new Date().valueOf().toString(), a['end'], a['id'], a['done'])
     document.getElementById('notes').appendChild(b)
 }
 
@@ -159,6 +168,8 @@ for (let i in notes_keys) {
 let add = document.getElementById('add')
 let del = document.getElementById('del')
 let input = document.getElementById('input')
+let done = document.getElementById('done')
+
 add.addEventListener('click', () => {
     let txt_value = input.value.toString()
     let time_value = date_picker.value.toString()
@@ -167,10 +178,10 @@ add.addEventListener('click', () => {
 
     let end_obj = new Date(time_value)
     let id = new Date().valueOf()
-    let b = note(txt_value, time_now.valueOf(), end_obj.valueOf(), id)
+    let b = note(txt_value, time_now.valueOf(), end_obj.valueOf(), id, false)
     document.getElementById('notes').appendChild(b)
     // save to storage
-    let obj = note_obj(txt_value, time_now.valueOf(), end_obj.valueOf(), id)
+    let obj = note_obj(txt_value, time_now.valueOf(), end_obj.valueOf(), id, false)
     notes[id.toString()] = obj
     localStorage.setItem('notes', JSON.stringify(notes))
 
@@ -201,4 +212,16 @@ del.addEventListener('click', () => {
         document.getElementById('notes').appendChild(temp)
         is_empty = true
     }
+})
+
+done.addEventListener('click', () => {
+    let a = document.getElementById('notes')
+    for (i in index) {
+        let b = document.getElementById(index[i])
+        let new_b = note(notes[index[i]]['data'], notes[index[i]]['start'], notes[index[i]]['end'], index[i], true)
+        a.replaceChild(new_b, b)
+        notes[index[i]]['done'] = true
+    }
+    index = []
+    localStorage.setItem('notes', JSON.stringify(notes))
 })

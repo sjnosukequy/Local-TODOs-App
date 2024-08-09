@@ -7,26 +7,35 @@
     <!-- <script src="https://www.youtube.com/iframe_api"></script> -->
 </head>
 
-<body>
-    <input id="txt" value="https://www.youtube.com/watch?v=Kpg-OVlruxU&list=RDKpg-OVlruxU&start_radio=1">
-    <button id='play_current'>play now</button>
-    <button id='add_playlist'>add to playlist</button>
-    <br>
-    <p id="tile" style="width: 420px;"></p>
-    <div id="contaier"></div>
-    <div style="width: 420px; display: flex; gap: 10px; margin-top: 10px;">
-        <button id="play" style="display: none;">play</button>
-        <button id="pause" style="display: none;">pause</button>
-        <button id="next" style="display: none;">next</button>
-        <button id="prev" style="display: none;">previous</button>
-        <button id="thumb" hide="false" style="display: none;">Show/Hide</button>
-        <button id="loop" values="none,all,once" inex='0' style="display: none;">repeat: none</button>
+<body style="height: 90vh;">
+    <div style="display: flex; gap: 20px; height: 100%;">
+        <div style="height: 100%;">
+            <div style="display: flex; width: 420px; gap: 10px;">
+                <input style="width: 100%;" id="txt"
+                    value="https://www.youtube.com/watch?v=Kpg-OVlruxU&list=RDKpg-OVlruxU&start_radio=1">
+                <button id='play_current'>play now</button>
+                <button id='add_playlist'>add to playlist</button>
+            </div>
+            <p id="tile" style="width: 420px;"></p>
+            <div id="contaier"></div>
+            <div style="width: 420px; display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+                <button id="play" style="display: none;">play</button>
+                <button id="pause" style="display: none;">pause</button>
+                <button id="next" style="display: none;">next</button>
+                <button id="prev" style="display: none;">previous</button>
+                <button id="thumb" hide="false" style="display: none;">Show/Hide</button>
+                <button id="loop" values="none,all,once" inex='0' style="display: none;">repeat: none</button>
+                <input type="range" min="0" max="100" value="100" id="volume" style="display: none; flex-basis: 100%;">
+            </div>
+        </div>
+        <div style="height: 100%;" id="playlist_info"></div>
     </div>
-    <p id="playlist_len"></p>
+
     <script>
         // 2. This code loads the IFrame Player API code asynchronously.
         let song_list = []
         let song_idx = 0
+        let song_names = []
         var tag = document.createElement('script');
         let body = document.querySelector('#contaier')
         let loop = 'none'
@@ -46,8 +55,15 @@
         }
 
         function onPlayerStateChange(event) {
-            document.getElementById('tile').innerText = event.target.videoTitle
-            document.getElementById('playlist_len').innerText = song_list.length.toString() + ' in the playlist'
+            if (event.data == 1) {
+                document.getElementById('tile').innerText = event.target.videoTitle
+                if (song_names[song_idx].includes('www.youtube.com')) {
+                    song_names[song_idx] = event.target.videoTitle
+                }
+                update_playlist_info()
+            }
+
+
             if (event.data == 0)
                 if (loop == 'once') {
                     player.loadVideoById(`${song_list[song_idx]}`)
@@ -69,6 +85,7 @@
             document.getElementById('prev').style.display = 'block'
             document.getElementById('thumb').style.display = 'block'
             document.getElementById('loop').style.display = 'block'
+            document.getElementById('volume').style.display = 'block'
 
             document.getElementById('play').addEventListener('click', () => {
                 player.playVideo()
@@ -76,6 +93,11 @@
 
             document.getElementById('pause').addEventListener('click', () => {
                 player.pauseVideo()
+            })
+
+            document.getElementById('volume').addEventListener('input', () => {
+                let value = Math.round(document.getElementById('volume').value)
+                player.setVolume(value)
             })
 
             document.getElementById('thumb').addEventListener('click', () => {
@@ -150,15 +172,18 @@
                     a.setAttribute('width', '420')
                     a.setAttribute('height', '345')
                     // a.style.display = 'none'
+                    song_list.push(c)
+                    song_names.push(`https://www.youtube.com/watch?v=${c}`)
                     body.appendChild(a)
                     onYouTubeIframeAPIReady()
-                    song_list.push(c)
                 }
                 else {
-                    player.loadVideoById(`${c}`)
                     song_list = []
+                    song_names = []
                     song_list.push(c)
+                    song_names.push(`https://www.youtube.com/watch?v=${c}`)
                     song_idx = 0
+                    player.loadVideoById(`${c}`)
                 }
             }
         })
@@ -184,19 +209,42 @@
                     a.setAttribute('width', '420')
                     a.setAttribute('height', '345')
                     // a.style.display = 'none'
+                    song_list.push(c)
+                    song_names.push(`https://www.youtube.com/watch?v=${c}`)
                     body.appendChild(a)
                     onYouTubeIframeAPIReady()
-                    song_list.push(c)
                 }
                 else {
                     song_list.push(c)
-                    document.getElementById('playlist_len').innerText = song_list.length.toString() + ' in the playlist'
+                    song_names.push(`https://www.youtube.com/watch?v=${c}`)
+                    update_playlist_info()
                 }
 
             }
         })
 
+        function update_playlist_info() {
+            let info = document.getElementById('playlist_info')
+            let song_len = song_list.length.toString() + ' in the playlist'
+            let list_info = document.createElement('ol')
+            list_info.style.overflowY = 'auto'
+            for (let i in song_list) {
+                let temp = document.createElement('li')
+                temp.innerText = song_names[i]
+                if (i == song_idx)
+                    temp.style.color = 'red'
+                list_info.appendChild(temp)
+            }
+            info.innerHTML = `<p>${song_len}</p>`
+            info.appendChild(list_info)
+        }
+
     </script>
+    <!-- <script id="primas-chat-script" type="text/javascript"
+        src="https://wf-demo-1.primas.net:7443/botconnector/static/js/primas.chat.min.js"
+        chat-token="https://wf-demo-1.primas.net:7443/botconnector/callflow-chatbox?restartConv=1&callFlowId=cFVeX3JbXEU=&displayControl=1&name=CHAT&logoUrl=https://ih1.redbubble.net/image.4645188095.0042/bg,f8f8f8-flat,750x,075,f-pad,750x1000,f8f8f8.jpg&triggerChatFlow=1"
+        pos-a="20" pos-b="20" c-color="00c462" p-width="375" p-height="65" c-size="60" show="0" c-site="0"
+        logo-chatbox="https://ih1.redbubble.net/image.4645188095.0042/bg,f8f8f8-flat,750x,075,f-pad,750x1000,f8f8f8.jpg"></script> -->
 </body>
 
 </html>
