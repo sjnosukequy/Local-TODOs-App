@@ -25,7 +25,8 @@
                 <button id="prev" style="display: none;">previous</button>
                 <button id="thumb" hide="false" style="display: none;">Show/Hide</button>
                 <button id="loop" values="none,all,once" inex='0' style="display: none;">repeat: none</button>
-                <input type="range" min="0" max="100" value="100" id="volume" style="display: none; flex-basis: 100%;">
+                <input type="range" min="0" max="100" value="100" id="volume"
+                    style="display: none; flex-basis: 100%; cursor: grab;">
             </div>
         </div>
         <div style="height: 100%;" id="playlist_info"></div>
@@ -230,10 +231,41 @@
             list_info.style.overflowY = 'auto'
             for (let i in song_list) {
                 let temp = document.createElement('li')
-                temp.innerText = song_names[i]
+                let div = document.createElement('div')
+                div.style.display = 'flex'
+                div.style.gap = '5px'
+                div.style.alignItems = 'center'
+                div.style.marginLeft = '5px'
+                let ply_butt = document.createElement('button')
+                ply_butt.innerText = '▶'
+                let del_butt = document.createElement('button')
+                del_butt.innerText = '➖'
+                let text_info = document.createElement('p')
+                text_info.innerText = song_names[i]
+                div.appendChild(ply_butt)
+                div.appendChild(del_butt)
+                div.appendChild(text_info)
+                temp.appendChild(div)
+
                 if (i == song_idx)
-                    temp.style.color = 'red'
+                    text_info.style.color = 'red'
                 list_info.appendChild(temp)
+
+                ply_butt.addEventListener('click', () => {
+                    player.loadVideoById(song_list[i])
+                    song_idx = i
+                })
+
+                del_butt.addEventListener('click', () => {
+                    if (song_idx != i) {
+                        song_list.splice(i, 1)
+                        song_names.splice(i, 1)
+                        if (i < song_idx)
+                            song_idx -= 1
+                        update_playlist_info()
+                    }
+                })
+
             }
             info.innerHTML = `<p>${song_len}</p>`
             info.appendChild(list_info)
