@@ -113,14 +113,17 @@ function note(data, start, end, id, done) {
     if (done === false || done === null || done === undefined)
         if (b.includes('Due'))
             theme = 'error'
+    if (done === true) {
+        theme = 'info'
+    }
 
     a.setAttribute('class', 'px-3 w-full max-h-[50%]')
     a.setAttribute('id', `${id}`)
     let html = `<div class="relative lexend-regular bg-${theme} text-${theme}-content rounded-lg inline-flex p-3 hover:border-solid w-full h-full">
                     <input type="checkbox" class="checkbox border-2 border-${theme}-content mr-5 self-center" />
                     <div class="grid grid-cols-1 w-[95%] gap-2">
-                        <p class="break w-full overflow-y-auto lexend-regular">${data}</p>
-                        <p class="lexend-bold text-${theme}-content">${b} | ${c}</p>
+                        <p class="text-sm md:text-base break w-full overflow-y-auto lexend-regular">${data}</p>
+                        <p class="text-sm md:text-base lexend-bold text-${theme}-content">${b} | ${c}</p>
                     </div>
                 </div>`
     a.innerHTML = html
@@ -144,6 +147,7 @@ function note(data, start, end, id, done) {
     return a
 }
 
+// Init Render
 notes = JSON.parse(localStorage.getItem('notes'))
 if (notes == null) {
     localStorage.setItem('notes', JSON.stringify({}))
@@ -162,6 +166,49 @@ for (let i in notes_keys) {
     let a = notes[notes_keys[i]]
     let b = note(a['data'], new Date().valueOf().toString(), a['end'], a['id'], a['done'])
     document.getElementById('notes').appendChild(b)
+}
+
+// Timer and Re-render
+let timer = document.getElementById('time')
+const config_timer = { attributes: false, childList: true, subtree: false };
+const change_event = (mutationList, observer) => {
+    for (const mutation of mutationList) {
+        if (mutation.type === "childList") {
+            let time_check = new Date().valueOf()
+            let time_check_current_sec = Math.floor(time_check % (60 * 1000) / 1000)
+            // console.log(time_check_current_sec)
+            let time_diff = (60 - time_check_current_sec) * 1000
+
+            setTimeout(() => {
+                re_render()
+                set_timer()
+            }, time_diff);
+        }
+    }
+};
+const observer = new MutationObserver(change_event);
+observer.observe(timer, config_timer);
+
+function set_timer() {
+    let init_time = new Date()
+    let init_date = init_time.toDateString()
+    let init_timestring = init_time.toTimeString().split(' ')[0]
+    let init_HH = init_timestring.split(':')
+    timer.innerText = `${init_date}
+        ${init_HH[0]} : ${init_HH[1]}`
+}
+set_timer()
+
+function re_render() {
+    for (let i in notes_keys) {
+        let a = notes[notes_keys[i]]
+        let b = note(a['data'], new Date().valueOf().toString(), a['end'], a['id'], a['done'])
+        let current_code = document.getElementById(a['id'])
+        let check_idx = index.indexOf(a['id'].toString())
+        if(check_idx != -1)
+            b.querySelector('input').checked = 'checked'
+        document.getElementById('notes').replaceChild(b, current_code)
+    }
 }
 
 // CRUD
@@ -184,6 +231,7 @@ add.addEventListener('click', () => {
     let obj = note_obj(txt_value, time_now.valueOf(), end_obj.valueOf(), id, false)
     notes[id.toString()] = obj
     localStorage.setItem('notes', JSON.stringify(notes))
+    notes_keys.push(id.toString())
 
     input.value = ''
     date_picker.setAttribute('value', '')
@@ -202,6 +250,7 @@ del.addEventListener('click', () => {
         let b = document.getElementById(index[i])
         a.removeChild(b)
         delete notes[index[i]]
+        notes_keys.splice(notes_keys.indexOf(index[i]), 1)
     }
     index = []
     localStorage.setItem('notes', JSON.stringify(notes))
