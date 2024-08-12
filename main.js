@@ -57,20 +57,22 @@ let date_picker = document.getElementById('date_picker')
 let time_now
 date_picker.addEventListener('focus', () => {
     // console.log('in')
-    var today = new Date();
-    time_now = today
-    var DD = String(today.getDate()).padStart(2, '0');
-    var MM = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    var YYYY = today.getFullYear();
-    let hour = today.getHours() + 1
-    var hh = String(hour >= 24 ? hour - 24 : hour).padStart(2, '0')
-    var mm = String(today.getMinutes()).padStart(2, '0')
+    if (date_picker.value == '') {
+        var today = new Date();
+        time_now = today
+        var DD = String(today.getDate()).padStart(2, '0');
+        var MM = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var YYYY = today.getFullYear();
+        let hour = today.getHours() + 1
+        var hh = String(hour >= 24 ? hour - 24 : hour).padStart(2, '0')
+        var mm = String(today.getMinutes()).padStart(2, '0')
 
-    // format: YYYY-MM-DDThh:mm
-    today = YYYY + '-' + MM + '-' + DD + 'T' + hh + ':' + mm;
-    date_picker.setAttribute("min", today);
-    date_picker.setAttribute("value", today);
-    date_picker.value = today
+        // format: YYYY-MM-DDThh:mm
+        today = YYYY + '-' + MM + '-' + DD + 'T' + hh + ':' + mm;
+        date_picker.setAttribute("min", today);
+        date_picker.setAttribute("value", today);
+        date_picker.value = today
+    }
 })
 
 
@@ -205,7 +207,7 @@ function re_render() {
         let b = note(a['data'], new Date().valueOf().toString(), a['end'], a['id'], a['done'])
         let current_code = document.getElementById(a['id'])
         let check_idx = index.indexOf(a['id'].toString())
-        if(check_idx != -1)
+        if (check_idx != -1)
             b.querySelector('input').checked = 'checked'
         document.getElementById('notes').replaceChild(b, current_code)
     }

@@ -69,7 +69,23 @@
     pointer-events: none;
 }
 
-.bg-overlay{
+.bg-overlay {
     background-image: url(https://i.gifer.com/origin/ee/eefaf57e61ac4ef9fbd0e7a0472b1060_w200.gif);
     background-blend-mode: screen;
 }
+
+/* dialog {
+    opacity: 0;
+    transition: opacity 0.7s ease-out,
+        display 0.4s ease-out allow-discrete;
+}
+
+dialog[open] {
+    opacity: 1;
+}
+
+@starting-style {
+    dialog[open] {
+        opacity: 0;
+    }
+} */
