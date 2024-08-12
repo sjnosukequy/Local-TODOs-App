@@ -229,7 +229,9 @@
             let song_len = song_list.length.toString() + ' in the playlist'
             let list_info = document.createElement('ol')
             list_info.style.overflowY = 'auto'
+            list_info.style.height = '100%'
             for (let i in song_list) {
+                i = parseInt(i)
                 let temp = document.createElement('li')
                 let div = document.createElement('div')
                 div.style.display = 'flex'
@@ -252,8 +254,9 @@
                 list_info.appendChild(temp)
 
                 ply_butt.addEventListener('click', () => {
-                    player.loadVideoById(song_list[i])
                     song_idx = i
+                    console.log(song_idx)
+                    player.loadVideoById(song_list[i])
                 })
 
                 del_butt.addEventListener('click', () => {
