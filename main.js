@@ -217,6 +217,7 @@ function re_render() {
 let add = document.getElementById('add')
 let del = document.getElementById('del')
 let input = document.getElementById('input')
+input.value = ''
 let done = document.getElementById('done')
 
 add.addEventListener('click', () => {
@@ -256,7 +257,7 @@ del.addEventListener('click', () => {
     }
     index = []
     localStorage.setItem('notes', JSON.stringify(notes))
-    if (Object.keys(notes).length == 0) {
+    if (document.getElementById('notes').children.length == 0) {
         let temp = document.createElement('span')
         temp.setAttribute('id', "goodjob")
         temp.innerHTML = '<pre data-prefix=">" class="lexend-bold bg-warning text-warning-content">GOOD JOB THERE IS NO TODOs </pre>'
